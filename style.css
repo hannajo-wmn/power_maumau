@@ -1,0 +1,70 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Georgia', 'serif';
+    border: red 1px solid;
+  }
+
+body {
+    margin: 1rem 2rem;
+}  
+
+.banner {
+    /* background-image: url(./img/banner.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 10rem;
+    /*color: white;*/
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+
+.column {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: center;
+}
+
+#btnNewGame {
+    margin: 1rem 0rem;
+}
+
+.hands {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    /*display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;*/
+}
+
+.playercards {
+    /*width: 25%;*/
+    flex-basis: 33.33333%;
+}
+
+.playercards img {
+    max-width: 7rem;
+}
+
+#openStack {
+    margin-bottom: 1rem;
+}
+
+.openStack img {
+    max-width: 7rem;
+}
+
+#hiddenStack img {
+    max-width: 7rem;
+    margin-bottom: 1rem;
+}
