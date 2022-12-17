@@ -1,6 +1,27 @@
+import valid from "./valid.js";
+console.log("I imported valid.js ", valid);
+
+
 const suits = ["spades", "diamonds", "clubs", "hearts"];
 const values = ["7", "8", "9", "10", "J", "Q", "K", "A"];
 
+
+/*
+const valid = {
+    "spades7": {
+        "diamonds7": true,
+        "diamonds7": true,
+        "diamonds10": true,
+    },
+    "spades8": {
+        "diamonds7": true,
+        "diamonds7": true,
+        "diamonds10": true,
+    }
+}
+
+valid["spades7"]["diamonds10"]
+*/
 
 class Card {
     constructor(cardName, suit, value) {
@@ -11,13 +32,15 @@ class Card {
     }
 };
 
-class Deck {
+class Game {
     constructor() {
         this.deck = []
         this.hand1 = []
         this.hand2 = []
         this.openStack = []
         this.hiddenStack = []
+        this.turn = null
+        this.topOfOpenStack = []
     };
 
     // generateDeck() creates a deck-array with 32 card objects in it
@@ -29,7 +52,7 @@ class Deck {
         };
 
         for (let k = 0; k < this.deck.length; k++) {
-            this.deck[k].path = `./img/${this.deck[k].cardName}.png`
+            this.deck[k].path = `/img/${this.deck[k].cardName}.png`
         }
         // console.log("This deck after generateDeck()")
         // console.log(JSON.parse(JSON.stringify(this.deck))) // makes a copy from this.deck after generating deck and logs the copy
@@ -43,7 +66,7 @@ class Deck {
         }
     }
 
-    // distributes Deck into two sets of carts for players, an open stack and a hidden stack
+    // distributes Deck into two sets of cards for players plus an open stack and a hidden stack
     dealCards(shuffledDeck) {
         this.hand1 = shuffledDeck.slice(0,9)
         this.hand2 = shuffledDeck.slice(9,18)
@@ -103,6 +126,8 @@ class Deck {
         }
     };
 
+    getCard = (e) => console.log(e.target.closest('div').id)
+
     // cleans deck and stack arrays, removes cards from the DOM
     cleanUp() {
         this.deck = [];
@@ -110,20 +135,60 @@ class Deck {
         this.hand2 = []; this.removeAllChildNodes(document.getElementById("hand2"));
         this.openStack = []; this.removeAllChildNodes(document.getElementById("openStack"));
         this.hiddenStack = [];
-    }
+        document.getElementById("hand1").removeEventListener("click", this.getCard)
+        document.getElementById("hand2").removeEventListener("click", this.getCard)
+    };
 
+    determineBeginner() {
+        let players = ["player1", "player2"];
+        var index = Math.floor(Math.random() * players.length);
+        let chosenPlayer = players[index];
+        this.turn = chosenPlayer
+        console.log(chosenPlayer, "begins.");
+    };
+
+    // Game setup routine: clean up, generate deck, shuffle, deal cards, render, determine beginner
     newGame() {
         this.cleanUp();
         this.generateDeck();
         this.shuffleDeck(this.deck);
         console.log(JSON.parse(JSON.stringify(this.deck)))
         this.dealCards(this.deck);
-        this.renderGame(this.hand1, this.hand2, this.openStack, this.hiddenStack)
+        this.renderGame(this.hand1, this.hand2, this.openStack, this.hiddenStack);
+        document.getElementById("hand1").addEventListener("click", this.getCard);
+        document.getElementById("hand2").addEventListener("click", this.getCard);
+        this.determineBeginner()
     }
+
+    checkLegitimacy(discardCard, topOfOpenStack) {
+        if (valid[discardCard][topOfOpenStack]) {
+            return true
+        }
+    }
+
+    discardCard(cardId) {
+        // checkLegitimacy()
+        const index = this.hand1.findIndex(element => element.cardName === cardId);
+        console.log("Index in hand1 is: ", index)
+
+        const card = this.hand1.splice(index, 1);
+        console.log("Card Object is: ", JSON.stringify(card))
+
+        console.log("Open Stack before push is: ", JSON.stringify(this.openStack))
+        this.openStack.push(card[0])
+        console.log("Open Stack after pushing is: ", JSON.stringify(this.openStack))
+
+        this.topOfOpenStack = this.openStack[this.openStack.length - 1]
+        console.log("The top of open Stack is now: ", JSON.stringify(this.topOfOpenStack))
+        // remove Card DIVs from DOM
+
+        // this.renderGame(this.hand1, this.hand2, this.openStack, this.hiddenStack)
+    }
+
 }
 
-const newDeck = new Deck();
-console.log(newDeck.deck)
-document.getElementById("btnNewGame").addEventListener("click", () => newDeck.newGame())
+const newGame = new Game();
+console.log(newGame.deck)
+document.getElementById("btnNewGame").addEventListener("click", () => newGame.newGame())
 
 
