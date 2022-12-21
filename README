@@ -1,3 +1,5 @@
+This project is a variant of the card game Mau Mau. 
+
 To run this program locally, you have to install parcel and a plug-in in the projects directory:
 
 npm install parcel
